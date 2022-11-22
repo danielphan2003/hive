@@ -11,9 +11,9 @@ in
     evalNode = extra: name: config: let
       inherit (stir config) evalConfig system;
     in
-      evalConfig (l.recursiveUpdate evalConfigArgs {
+      evalConfig {
         inherit system;
         modules = [extra beeOptions config];
-      });
+      };
   in
     l.mapAttrs (evalNode {}) comb
