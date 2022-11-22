@@ -1,7 +1,7 @@
 {
   nixpkgs,
   cellBlock ? "nixosConfigurations",
-  evalConfigArgs,
+  evalConfigArgs ? {},
 }: let
   l = nixpkgs.lib // builtins;
   inherit (import ./pasteurize.nix {inherit nixpkgs cellBlock evalConfigArgs;}) pasteurize stir beeOptions;
@@ -11,7 +11,7 @@ in
     evalNode = extra: name: config: let
       inherit (stir config) evalConfig system;
     in
-      evalConfig (l.recursiveUpdate config.evalConfigArgs {
+      evalConfig (l.recursiveUpdate evalConfigArgs {
         inherit system;
         modules = [extra beeOptions config];
       });
