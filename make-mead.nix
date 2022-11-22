@@ -10,9 +10,9 @@ in
     evalNode = extra: name: config: let
       inherit (stir config) evalConfig system;
     in
-      evalConfig {
+      evalConfig (l.recursiveUpdate config.evalConfigArgs {
         inherit system;
-        modules = [extra beeOptions config];
-      };
+        modules = [extra beeOptions (l.removeAttrs ["evalConfigArgs"] config)];
+      });
   in
     l.mapAttrs (evalNode {}) comb
