@@ -2,9 +2,10 @@
   colmena,
   nixpkgs,
   cellBlock ? "colmenaConfigurations",
+  evalConfigArgs ? {},
 }: let
   l = nixpkgs.lib // builtins;
-  inherit (import ./pasteurize.nix {inherit nixpkgs cellBlock;}) pasteurize stir beeOptions;
+  inherit (import ./pasteurize.nix {inherit nixpkgs cellBlock evalConfigArgs;}) pasteurize stir beeOptions;
 
   colmenaModules = [
     colmena.nixosModules.assertionModule
@@ -19,9 +20,9 @@ in
     evalNode = extra: name: config: let
       inherit (stir config) evalConfig system;
     in
-      evalConfig (l.recursiveUpdate config.evalConfigArgs {
+      evalConfig (l.recursiveUpdate evalConfigArgs {
         inherit system;
-        modules = colmenaModules ++ [extra (l.removeAttrs ["evalConfigArgs"] config)];
+        modules = colmenaModules ++ [extra config];
         specialArgs = {inherit name;};
       });
   in
