@@ -1,7 +1,7 @@
 {
   nixpkgs,
   cellBlock,
-  evalConfigArgs
+  evalConfigArgs ? {},
 }: let
   l = nixpkgs.lib // builtins;
   evalModulesMinimal =
