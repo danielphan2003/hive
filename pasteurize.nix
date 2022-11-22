@@ -87,7 +87,7 @@
       imports = [config];
       inherit _file;
     };
-    checked = (evalModulesMinimal {modules = [combCheckModule beeOptions locatedConfig];}).config;
+    checked = (evalModulesMinimal (l.recursiveUpdate evalConfigArgs {modules = [combCheckModule beeOptions locatedConfig];})).config;
     asserted = let
       failedAsserts = map (x: x.message) (l.filter (x: !x.assertion) checked._hive_erased);
     in
