@@ -19,11 +19,11 @@ in
     evalNode = extra: name: config: let
       inherit (stir config) evalConfig system;
     in
-      evalConfig {
+      evalConfig (l.recursiveUpdate config.evalConfigArgs {
         inherit system;
-        modules = colmenaModules ++ [extra config];
+        modules = colmenaModules ++ [extra (l.removeAttrs ["evalConfigArgs"] config)];
         specialArgs = {inherit name;};
-      };
+      });
   in
     # Exported attributes
     l.fix (this: {
