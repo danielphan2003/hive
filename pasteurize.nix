@@ -187,7 +187,7 @@
       # need to use the extended lib
       lib.evalModules {
         modules = [config beeOptions extra] ++ hmModules;
-        specialArgs = {
+        specialArgs = l.recursiveUpdate (config.bee.specialArgs or {}) {
           modulesPath = l.toString (config.bee.home + /modules);
         };
       };
