@@ -13,6 +13,7 @@ in
       evalConfig {
         inherit system;
         modules = [extra beeOptions config];
+        specialArgs = config.bee.specialArgs or {};
       };
   in
     l.mapAttrs (evalNode {}) comb
