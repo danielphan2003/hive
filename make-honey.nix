@@ -22,7 +22,7 @@ in
       evalConfig {
         inherit system;
         modules = colmenaModules ++ [extra config];
-        specialArgs = {inherit name;};
+        specialArgs = l.recursiveUpdate (config.bee.specialArgs or {}) {inherit name;};
       };
   in
     # Exported attributes
