@@ -21,9 +21,9 @@ in
     in
       evalConfig {
         inherit system;
+        inherit (config.bee) lib;
         modules = colmenaModules ++ [extra config];
-        lib = config.bee.lib or l;
-        specialArgs = (config.bee.specialArgs or {}) // {inherit name;};
+        specialArgs = config.bee.specialArgs // {inherit name;};
       };
   in
     # Exported attributes
