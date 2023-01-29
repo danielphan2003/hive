@@ -22,6 +22,7 @@ in
       evalConfig {
         inherit system;
         modules = colmenaModules ++ [extra config];
+        lib = config.bee.lib or l;
         specialArgs = (config.bee.specialArgs or {}) // {inherit name;};
       };
   in
