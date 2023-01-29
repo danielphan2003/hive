@@ -4,6 +4,14 @@
 }: let
   l = nixpkgs.lib // builtins;
 
+  evalModulesMinimal =
+    (import (nixpkgs + /nixos/lib/default.nix) {
+      inherit (nixpkgs) lib;
+      # don't show the warning.
+      featureFlags.minimalModules = {};
+    })
+    .evalModules;
+
   beeOptions = {config, ...}: {
     options.bee = {
       system = l.mkOption {
@@ -79,16 +87,9 @@
       imports = [config];
       inherit _file;
     };
-    evalModulesMinimal =
-      (import (nixpkgs + /nixos/lib/default.nix) {
-        lib = config.bee.pkgs.lib or nixpkgs.lib;
-        # don't show the warning.
-        featureFlags.minimalModules = {};
-      })
-      .evalModules;
     checked = (evalModulesMinimal {
       modules = [combCheckModule beeOptions locatedConfig];
-      specialArgs = config.bee.specialArgs or {};
+      specialArgs = (config.bee.specialArgs or {}) // {lib = config.bee.pkgs.lib or l};
     }).config;
     asserted = let
       failedAsserts = map (x: x.message) (l.filter (x: !x.assertion) checked._hive_erased);
@@ -188,6 +189,7 @@
       lib.evalModules {
         modules = [config beeOptions extra] ++ hmModules;
         specialArgs = l.recursiveUpdate (config.bee.specialArgs or {}) {
+          inherit lib;
           modulesPath = l.toString (config.bee.home + /modules);
         };
       };
