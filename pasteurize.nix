@@ -113,8 +113,8 @@
       inherit _file;
     };
     checked = (evalModulesMinimal {
+      inherit (config.bee) lib specialArgs;
       modules = [combCheckModule beeOptions locatedConfig];
-      specialArgs = config.bee.specialArgs or {};
     }).config;
     asserted = let
       failedAsserts = map (x: x.message) (l.filter (x: !x.assertion) checked._hive_erased);
@@ -212,8 +212,9 @@
     evaled =
       # need to use the extended lib
       lib.evalModules {
+        inherit (config.bee) lib;
         modules = [config beeOptions extra] ++ hmModules;
-        specialArgs = (config.bee.specialArgs or {}) // {
+        specialArgs = config.bee.specialArgs // {
           modulesPath = l.toString (config.bee.home + /modules);
         };
       };
