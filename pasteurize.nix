@@ -3,7 +3,6 @@
   cellBlock,
 }: let
   l = nixpkgs.lib // builtins;
-
   evalModulesMinimal =
     (import (nixpkgs + /nixos/lib/default.nix) {
       inherit (nixpkgs) lib;
@@ -89,7 +88,7 @@
     };
     checked = (evalModulesMinimal {
       modules = [combCheckModule beeOptions locatedConfig];
-      specialArgs = (config.bee.specialArgs or {}) // {lib = config.bee.pkgs.lib or l;};
+      specialArgs = config.bee.specialArgs or {};
     }).config;
     asserted = let
       failedAsserts = map (x: x.message) (l.filter (x: !x.assertion) checked._hive_erased);
@@ -175,7 +174,7 @@
   # same as stir, but for home manager configs
   shake = config: extra: let
     # we consume the already transformed contract here
-    lib = import (config.bee.home + /modules/lib/stdlib-extended.nix) config.bee.pkgs.lib;
+    lib = import (config.bee.home + /modules/lib/stdlib-extended.nix) l;
     hmModules = import (config.bee.home + /modules/modules.nix) {
       inherit (config.bee) pkgs;
       inherit lib;
@@ -188,8 +187,7 @@
       # need to use the extended lib
       lib.evalModules {
         modules = [config beeOptions extra] ++ hmModules;
-        specialArgs = l.recursiveUpdate (config.bee.specialArgs or {}) {
-          inherit lib;
+        specialArgs = (config.bee.specialArgs or {}) // {
           modulesPath = l.toString (config.bee.home + /modules);
         };
       };
