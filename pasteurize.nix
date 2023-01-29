@@ -37,6 +37,32 @@
           then x.${config.bee.system}
           else x;
       };
+      lib = l.mkOption {
+        type = l.mkOptionType {
+          name = "library";
+          description = "library of nixpkgs or home manager";
+          check = l.isAttrs;
+        };
+        description = ''
+          divnix/hive optionally requires you to set the library for nixos/home manager targets.
+          
+          Defaults to 'config.bee.pkgs.lib' for nixos targets.
+          Apply 'import (config.bee.home + /modules/lib/stdlib-extended.nix)' for home manager targets.
+        '';
+        apply = x:
+          if (l.hasSuffix "home" cellBlock)
+          then import (config.bee.home + /modules/lib/stdlib-extended.nix) x
+          else x;
+      };
+      specialArgs = l.mkOption {
+        type = l.types.attrs;
+        description = "divnix/hive optionally requires you to set the special args for evalModules";
+        default = {};
+      };
+    };
+    
+    config.bee = {
+      lib = l.mkDefault config.bee.pkgs.lib;
     };
   };
 
