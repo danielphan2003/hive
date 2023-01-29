@@ -13,6 +13,7 @@ in
       evalConfig {
         inherit system;
         modules = [extra beeOptions config];
+        lib = config.bee.lib or l;
         specialArgs = config.bee.specialArgs or {};
       };
   in
