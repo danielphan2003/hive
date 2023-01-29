@@ -3,13 +3,6 @@
   cellBlock,
 }: let
   l = nixpkgs.lib // builtins;
-  evalModulesMinimal =
-    (import (nixpkgs + /nixos/lib/default.nix) {
-      inherit (nixpkgs) lib;
-      # don't show the warning.
-      featureFlags.minimalModules = {};
-    })
-    .evalModules;
 
   beeOptions = {config, ...}: {
     options.bee = {
@@ -112,9 +105,16 @@
       imports = [config];
       inherit _file;
     };
+    evalModulesMinimal =
+      (import (nixpkgs + /nixos/lib/default.nix) {
+        lib = config.bee.lib or nixpkgs.lib;
+        # don't show the warning.
+        featureFlags.minimalModules = {};
+      })
+      .evalModules;
     checked = (evalModulesMinimal {
-      inherit (config.bee) lib specialArgs;
       modules = [combCheckModule beeOptions locatedConfig];
+      specialArgs = config.bee.specialArgs or {};
     }).config;
     asserted = let
       failedAsserts = map (x: x.message) (l.filter (x: !x.assertion) checked._hive_erased);
