@@ -174,7 +174,7 @@
   # same as stir, but for home manager configs
   shake = config: extra: let
     # we consume the already transformed contract here
-    lib = import (config.bee.home + /modules/lib/stdlib-extended.nix) l;
+    lib = import (config.bee.home + /modules/lib/stdlib-extended.nix) config.bee.pkgs.lib;
     hmModules = import (config.bee.home + /modules/modules.nix) {
       inherit (config.bee) pkgs;
       inherit lib;
