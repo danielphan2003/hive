@@ -89,7 +89,7 @@
     };
     checked = (evalModulesMinimal {
       modules = [combCheckModule beeOptions locatedConfig];
-      specialArgs = (config.bee.specialArgs or {}) // {lib = config.bee.pkgs.lib or l};
+      specialArgs = (config.bee.specialArgs or {}) // {lib = config.bee.pkgs.lib or l;};
     }).config;
     asserted = let
       failedAsserts = map (x: x.message) (l.filter (x: !x.assertion) checked._hive_erased);
